@@ -2593,8 +2593,6 @@ Session::new_midi_track (const ChanCount& input, const ChanCount& output, bool s
 				}
 			}
 
-			track->non_realtime_input_change();
-
 			if (route_group) {
 				route_group->add (track);
 			}
@@ -3196,8 +3194,6 @@ Session::new_audio_track (int input_channels, int output_channels, RouteGroup* r
 			if (route_group) {
 				route_group->add (track);
 			}
-
-			track->non_realtime_input_change();
 
 			new_routes.push_back (track);
 			ret.push_back (track);
