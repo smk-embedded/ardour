@@ -360,6 +360,12 @@ AutomationList::state (bool full, bool need_lock)
 #endif
 
 	if (full) {
+#ifndef XXX_LATCH_AUTOMATION__BREAK_SESSION_FORMAT_XXX
+		/* save "latch" as "touch" for session-format compat */
+		if (_state == Latch) {
+				root->set_property ("state", Touch);
+		} else
+#endif
 		/* never serialize state with Write enabled - too dangerous
 		   for the user's data
 		*/
