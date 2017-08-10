@@ -676,6 +676,7 @@ Session::follow_slave (pframes_t nframes)
 		DEBUG_TRACE (DEBUG::Slave, "still waiting to compute slave delta, no disk output\n");
 		DiskReader::set_no_disk_output (true);
 	} else {
+		DEBUG_TRACE (DEBUG::Slave, "slave delta computed, disk output reactivated\n");
 		DiskReader::set_no_disk_output (false);
 	}
 
