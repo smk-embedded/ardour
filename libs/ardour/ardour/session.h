@@ -1106,7 +1106,8 @@ class LIBARDOUR_API Session : public PBD::StatefulDestructible, public PBD::Scop
 	enum SlaveState {
 		Stopped,
 		Waiting,
-		Running
+		Running,
+		RunAfterLocate
 	};
 
 	SlaveState slave_state() const { return _slave_state; }

@@ -388,7 +388,9 @@ Session::process_with_events (pframes_t nframes)
 		}
 	}
 
-	if (_transport_speed == 1.0) {
+	if (_slave && _slave_state != Running) {
+		frames_moved = 0;
+	} else if (_transport_speed == 1.0) {
 		frames_moved = (framecnt_t) nframes;
 	} else {
 		interpolation.set_target_speed (_target_transport_speed);
@@ -724,6 +726,13 @@ Session::track_slave_state (float slave_speed, framepos_t slave_transport_frame,
 		/* slave is running */
 
 		switch (_slave_state) {
+		case RunAfterLocate:
+			if (locate_pending()) {
+				return;
+			}
+			_slave_state = Running;
+			break;
+
 		case Stopped:
 			if (_slave->requires_seekahead()) {
 				slave_wait_end = slave_transport_frame + _slave->seekahead_distance ();
@@ -749,8 +758,13 @@ Session::track_slave_state (float slave_speed, framepos_t slave_transport_frame,
 				if (slave_transport_frame != _transport_frame) {
 					DEBUG_TRACE (DEBUG::Slave, string_compose ("require locate to run. eng: %1 -> sl: %2\n", _transport_frame, slave_transport_frame));
 					locate (slave_transport_frame, false, false);
+					/* locate_pending() is now almost certainly true, because the full locate process
+					   will not be complete yet (it will complete asynchronously in a butler thread
+					*/
+					_slave_state = RunAfterLocate;
+				} else {
+					_slave_state = Running;
 				}
-				_slave_state = Running;
 			}
 			break;
 
@@ -848,7 +862,9 @@ Session::process_without_events (pframes_t nframes)
 		return;
 	}
 
-	if (_transport_speed == 1.0) {
+	if (_slave && _slave_state != Running) {
+		frames_moved = 0;
+	} else if (_transport_speed == 1.0) {
 		frames_moved = (framecnt_t) nframes;
 	} else {
 		interpolation.set_target_speed (_target_transport_speed);
