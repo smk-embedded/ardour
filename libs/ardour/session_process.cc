@@ -602,7 +602,7 @@ Session::follow_slave (pframes_t nframes)
 		*/
 
 		if (_slave_state == Running) {
-			calculate_moving_average_of_slave_delta(dir, abs(this_delta));
+			calculate_moving_average_of_slave_delta(dir, this_delta);
 		}
 	}
 
@@ -706,18 +706,23 @@ Session::calculate_moving_average_of_slave_delta (int dir, framecnt_t this_delta
 		delta_accumulator[delta_accumulator_cnt++] = (framecnt_t) dir *  (framecnt_t) this_delta;
 	}
 
+	int backwards = 0;
+	int forwards = 0;
+
 	if (have_first_delta_accumulator) {
 		average_slave_delta = 0L;
+
 		for (int i = 0; i < delta_accumulator_size; ++i) {
-			average_slave_delta += delta_accumulator[i];
+			if (delta_accumulator[i] < 0) {
+				backwards++;
+			} else {
+				forwards++;
+			}
+			average_slave_delta += abs (delta_accumulator[i]);
 		}
+
 		average_slave_delta /= (int32_t) delta_accumulator_size;
-		if (average_slave_delta < 0L) {
-			average_dir = -1;
-			average_slave_delta = abs (average_slave_delta);
-		} else {
-			average_dir = 1;
-		}
+		average_dir = (backwards > forwards) ? -1 : 1;
 	}
 }
 
