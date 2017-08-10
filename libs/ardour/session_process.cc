@@ -732,6 +732,7 @@ Session::track_slave_state (float slave_speed, framepos_t slave_transport_frame,
 				return;
 			}
 			_slave_state = Running;
+			have_first_delta_accumulator = false;
 			break;
 
 		case Stopped:
