@@ -695,6 +695,8 @@ Session::follow_slave (pframes_t nframes)
 void
 Session::calculate_moving_average_of_slave_delta (int dir, framecnt_t this_delta)
 {
+	DEBUG_TRACE (DEBUG::Slave, string_compose ("compute avg delta using %1, cnt now %2\n", this_delta, delta_accumulator_cnt));
+
 	if (delta_accumulator_cnt >= delta_accumulator_size) {
 		have_first_delta_accumulator = true;
 		delta_accumulator_cnt = 0;
