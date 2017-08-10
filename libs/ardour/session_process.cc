@@ -714,7 +714,7 @@ Session::calculate_moving_average_of_slave_delta (int dir, framecnt_t this_delta
 		average_slave_delta /= (int32_t) delta_accumulator_size;
 		if (average_slave_delta < 0L) {
 			average_dir = -1;
-			average_slave_delta = average_slave_delta;
+			average_slave_delta = abs (average_slave_delta);
 		} else {
 			average_dir = 1;
 		}
